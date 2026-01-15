@@ -1,0 +1,23 @@
+# 构建目录与依赖
+/bin/
+/out/
+/target/
+node_modules/
+
+# 敏感信息
+.env
+*.pem
+config.json
+
+# 日志文件
+*.log
+logs/
+```
+
+### 4. 特别注意事项
+*   **文件已跟踪：** 如果文件已经提交到 Git，再加到 `.gitignore` 是无效的。需先从暂存区移除（不删除本地文件）：
+    `git rm --cached <文件路径>`
+*   **检查规则：** 如果不确定某个文件为什么被忽略，可使用命令：
+    `git check-ignore -v <文件路径>`
+*   **全局设置：** 若想在所有项目中默认忽略某些文件（如 IDE 配置），可设置全局 ignore：
+    `git config --global core.excludesfile ~/.gitignore_global`
