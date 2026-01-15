@@ -1,5 +1,6 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
+import { API_ENDPOINTS, buildGatewayUrl, GATEWAY_PATHS } from "@/config";
 
 export interface LocalizedName {
   code: string;
@@ -19,9 +20,7 @@ export const useServerStore = defineStore("server", () => {
   const getServers = async () => {
     isLoading.value = true;
     try {
-      const response = await fetch(
-        "https://c1p-innertest-center.avalongames.com/v1/serverlist/server",
-      );
+      const response = await fetch(API_ENDPOINTS.SERVER_LIST);
       if (!response.ok) {
         throw new Error(`获取服务器列表失败: ${response.statusText}`);
       }
@@ -47,9 +46,16 @@ export const useServerStore = defineStore("server", () => {
   };
 
   const startServer = async (serverId: number) => {
+    const server = servers.value.find((s) => s.id === serverId);
+    if (!server) {
+      throw new Error(`未找到ID为${serverId}的服务器`);
+    }
+
+    const url = buildGatewayUrl(server.gateAddr, GATEWAY_PATHS.SERVER_OP_START);
+
     try {
       const response = await fetch(
-        `https://c1p-innertest-center.avalongames.com/v1/server/op/start/${serverId}`,
+        url,
         {
           method: "POST",
           headers: {
@@ -73,9 +79,16 @@ export const useServerStore = defineStore("server", () => {
   };
 
   const stopServer = async (serverId: number) => {
+    const server = servers.value.find((s) => s.id === serverId);
+    if (!server) {
+      throw new Error(`未找到ID为${serverId}的服务器`);
+    }
+
+    const url = buildGatewayUrl(server.gateAddr, GATEWAY_PATHS.SERVER_OP_STOP);
+
     try {
       const response = await fetch(
-        `https://c1p-innertest-center.avalongames.com/v1/server/op/stop/${serverId}`,
+        url,
         {
           method: "POST",
           headers: {
@@ -100,9 +113,16 @@ export const useServerStore = defineStore("server", () => {
   };
 
   const restartServer = async (serverId: number) => {
+    const server = servers.value.find((s) => s.id === serverId);
+    if (!server) {
+      throw new Error(`未找到ID为${serverId}的服务器`);
+    }
+
+    const url = buildGatewayUrl(server.gateAddr, GATEWAY_PATHS.SERVER_OP_RESTART);
+
     try {
       const response = await fetch(
-        `https://c1p-innertest-center.avalongames.com/v1/server/op/restart/${serverId}`,
+        url,
         {
           method: "POST",
           headers: {
@@ -131,10 +151,16 @@ export const useServerStore = defineStore("server", () => {
     timestamp: string,
     syncGameTime: boolean = true,
   ) => {
-    // API call to set server time
+    const server = servers.value.find((s) => s.id === serverId);
+    if (!server) {
+      throw new Error(`未找到ID为${serverId}的服务器`);
+    }
+
+    const url = buildGatewayUrl(server.gateAddr, GATEWAY_PATHS.SERVER_TIME);
+
     try {
       const response = await fetch(
-        `https://c1p-innertest-center.avalongames.com/v1/server/time`,
+        url,
         {
           method: "PUT",
           headers: {
